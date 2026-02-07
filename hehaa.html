@@ -1,0 +1,247 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>A Magical Rose For You 🌹</title>
+<style>
+  /* --- Body & Background --- */
+  body {
+    margin: 0;
+    height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-family: Georgia, serif;
+    background: radial-gradient(circle at 20% 20%, #fff7e6, transparent 30%), linear-gradient(180deg, #ffe7f0 0%, #ffdede 60%, #f8e6d6 100%);
+    color: #3b2b2b;
+    overflow: hidden;
+    position: relative;
+  }
+
+  body::after {
+    content:'';
+    position:absolute;
+    width:100%; height:100%;
+    background:radial-gradient(circle, rgba(255,255,255,0.1) 0%, transparent 80%);
+    animation: shimmer 6s ease-in-out infinite alternate;
+    pointer-events:none;
+  }
+  @keyframes shimmer { 0% {opacity:0.3} 100% {opacity:0.1} }
+
+  /* --- Card --- */
+  .card {
+    max-width: 720px;
+    width: 90%;
+    background: rgba(255,255,255,0.92);
+    border-radius: 20px;
+    padding: 20px;
+    text-align: center;
+    box-shadow: 0 30px 60px rgba(0,0,0,0.18);
+    position: relative;
+    cursor: pointer;
+  }
+
+  .top {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 18px;
+    align-items: center;
+  }
+
+  .image-wrap {
+    width: 240px;
+    height: 240px;
+    border-radius: 16px;
+    overflow: hidden;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.12);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: #ffecec;
+    position: relative;
+  }
+
+  .image-wrap img { width: 100%; height: 100%; object-fit: cover; display: block; }
+
+  h1 { margin: 0; font-size: 22px; }
+  h2 { margin: 6px 0 0; font-size: 18px; color:#6a3b36; }
+
+  .rose-btn {
+    font-size: 72px;
+    cursor: pointer;
+    transition: transform .4s, filter .4s;
+  }
+  .rose-btn.active {
+    transform: scale(1.15) rotate(-5deg);
+    filter: drop-shadow(0 6px 20px rgba(220,90,120,0.35));
+  }
+
+  .controls { margin-top: 14px; display: flex; justify-content: center; gap: 8px; flex-wrap: wrap; }
+  .btn { background: #6a2d2d; color: white; padding: 8px 12px; border-radius: 10px; border: none; cursor: pointer; }
+
+  .poem { margin-top: 18px; font-style: italic; min-height: 54px; opacity:0; transition: opacity .5s; }
+
+  /* --- Petals --- */
+  .petal { position: absolute; font-size: 24px; pointer-events: none; animation-name: fall, sway; animation-iteration-count: infinite; }
+  @keyframes fall { from {transform: translateY(-10vh) rotate(0deg); opacity:1} to {transform: translateY(110vh) rotate(360deg); opacity:0} }
+  @keyframes sway { 0%,100% {transform: translateX(0)} 50% {transform: translateX(15px)} }
+
+  /* --- Boy walking legs --- */
+  #boyGroup.walking #leftLeg, #boyGroup.walking #rightLeg {
+    transform-box: fill-box;
+    transform-origin: 30px 70px;
+    animation: legMove 0.6s linear infinite;
+  }
+  #boyGroup.walking #rightLeg { transform-origin: 50px 70px; animation-direction: reverse; }
+  @keyframes legMove { 0%{transform:rotate(0)}50%{transform:rotate(22deg)}100%{transform:rotate(0)} }
+
+  @media (max-width:720px) {
+    .top { flex-direction: column; }
+    .image-wrap { width: 200px; height: 200px; }
+  }
+</style>
+</head>
+<body>
+
+<div class="card" id="card">
+  <div class="top">
+    <div class="image-wrap" id="imageWrap">
+      <iframe src="https://giphy.com/embed/a39kqrdmasEaQ" width="402" height="480" style="" frameBorder="0" class="giphy-embed" allowFullScreen></iframe>
+      <p style="margin:8px 0 0;font-size:12px;color:#6a5a5a"><a href="https://giphy.com/gifs/butterfly-a39kqrdmasEaQ" target="_blank" rel="noopener">via GIPHY</a></p>
+    </div>
+    <div>
+      <h1>Happy Rose Day, Dhiruu🌻</h1>
+      <h2 id="name"></h2>
+      <div style="margin:10px 0; font-size:15px; color:#5b3d3b; text-align:left; max-width:420px;">
+        <strong>Dear Belle,</strong>
+        <p>Happy Rose Day 🌹</p>
+        <p>Just like a rose stands strong through sunshine and storms, I’ll be there for you in your highs and lows. In joy, I’ll celebrate with you; in tough times, I’ll quietly stay by your side. May your days bloom with warmth, strength, and smiles.</p>
+      </div>
+      <div style="margin-top:10px;">
+        <div class="rose-btn" id="roseBtn" onclick="giveRose()">🌹</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="controls">
+    <button class="btn" id="revealPoem">Reveal a Poem</button>
+  </div>
+  <div class="poem" id="poemArea"></div>
+</div>
+
+<!-- Boy SVG walking -->
+<div id="boyScene" style="position:fixed;left:0;bottom:12px;height:160px;pointer-events:none;overflow:visible;">
+  <svg viewBox="0 0 300 160" style="width:300px;height:160px;position:absolute;left:-140px;bottom:0">
+    <g id="boyGroup" transform="translate(-140,0)">
+      <circle cx="40" cy="30" r="12" fill="#f1c27d"/>
+      <rect x="34" y="42" width="12" height="28" rx="3" fill="#3b5a6f"/>
+      <line id="leftLeg" x1="40" y1="70" x2="30" y2="100" stroke="#3b5a6f" stroke-width="4" stroke-linecap="round"/>
+      <line id="rightLeg" x1="40" y1="70" x2="50" y2="100" stroke="#3b5a6f" stroke-width="4" stroke-linecap="round"/>
+      <line id="arm" x1="40" y1="54" x2="80" y2="64" stroke="#3b5a6f" stroke-width="4" stroke-linecap="round"/>
+      <circle id="hand" cx="80" cy="64" r="3" fill="transparent"/>
+    </g>
+  </svg>
+</div>
+
+<script>
+  // Typewriter Name
+  const nameText = "Dhirani";
+  let idx = 0;
+  const nameEl = document.getElementById('name');
+  (function typeName(){ if(idx<nameText.length){ nameEl.innerHTML+=nameText[idx++]; setTimeout(typeName,110); }})();
+
+  // Poems
+  const poems = [
+    "Friendship blooms like a steady rose — warm, true, evergreen.",
+    "May small joys gather like petals around your days; laughter, calm, and bright afternoons.",
+    "Kindness is your quiet bloom. Here’s a rose to say thank you for being you."
+  ];
+  let poemIndex = 0;
+  const poemArea = document.getElementById('poemArea');
+  document.getElementById('revealPoem').addEventListener('click', ()=>{typePoem(poems[poemIndex++%poems.length]);});
+
+  function typePoem(text){
+    poemArea.innerHTML=''; poemArea.style.opacity=1;
+    let i=0;
+    (function type(){ if(i<text.length){ poemArea.innerHTML+=text[i++]; setTimeout(type,30); }})();
+  }
+
+  // Rose + Boy + Petals + Interactive Magic
+  const card = document.getElementById('card');
+  card.addEventListener('click', giveRose);
+
+  function giveRose(){
+    const btn = document.getElementById('roseBtn');
+    btn.classList.add('active');
+    setTimeout(()=>btn.classList.remove('active'),600);
+
+    // Petals
+    for(let i=0;i<15;i++){
+      const p=document.createElement('div');
+      p.className='petal';
+      p.innerText='🌸';
+      p.style.left=Math.random()*100+'vw';
+      p.style.top='-10vh';
+      p.style.animationDuration=(3+Math.random()*2)+'s';
+      p.style.fontSize=(12+Math.random()*20)+'px';
+      document.body.appendChild(p);
+      setTimeout(()=>p.remove(),5000+Math.random()*2000);
+    }
+
+    // Boy walk and throw rose
+    const boy=document.getElementById('boyGroup');
+    const arm=document.getElementById('arm');
+    const hand=document.getElementById('hand');
+    const imageWrap=document.getElementById('imageWrap');
+
+    boy.classList.add('walking');
+    boy.style.transition='transform 1s ease-out';
+    boy.style.transform='translate(50px,0)';
+
+    setTimeout(()=>{
+      const handRect=hand.getBoundingClientRect();
+      const imgRect=imageWrap.getBoundingClientRect();
+      const start={x:handRect.left+handRect.width/2, y:handRect.top+handRect.height/2};
+      const end={x:imgRect.left+imgRect.width/2, y:imgRect.top+imgRect.height/2};
+      const control={x:(start.x+end.x)/2, y:Math.min(start.y,end.y)-120};
+
+      // Rose flying with growth + spin + bounce
+      const rose=document.createElement('div');
+      rose.innerText='🌹';
+      rose.style.position='fixed';
+      rose.style.left=start.x+'px';
+      rose.style.top=start.y+'px';
+      rose.style.fontSize='0px';
+      rose.style.zIndex=9999;
+      rose.style.transition='transform 0.3s';
+      document.body.appendChild(rose);
+
+      const startTime=performance.now();
+      function step(now){
+        const t=Math.min(1,(now-startTime)/900);
+        const inv=1-t;
+        const x=inv*inv*start.x + 2*inv*t*control.x + t*t*end.x;
+        const y=inv*inv*start.y + 2*inv*t*control.y + t*t*end.y;
+        rose.style.left=x-15+'px';
+        rose.style.top=y-15+'px';
+        rose.style.fontSize=20+ t*40 + 'px';
+        rose.style.transform=`rotate(${t*360}deg) scale(${0.8+t*0.4})`;
+        if(t<1) requestAnimationFrame(step);
+        else { rose.style.transform+=' scale(1.1)'; setTimeout(()=>rose.remove(),350); }
+      }
+      requestAnimationFrame(step);
+
+      setTimeout(()=>{
+        boy.classList.remove('walking');
+        boy.style.transform='translate(0,0)';
+      },1000);
+    },400);
+  }
+
+  // Auto reveal first poem
+  setTimeout(()=>{typePoem(poems[0]); poemIndex=1;},1200);
+</script>
+</body>
+</html>
